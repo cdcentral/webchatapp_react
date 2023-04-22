@@ -1,0 +1,10 @@
+/*
+.<class>
+#<id>
+*/
+.NavBar {
+	 border-style: dotted;
+	color: green;
+	height: 50px;
+	max-height: 50px;
+}

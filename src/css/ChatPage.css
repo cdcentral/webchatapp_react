@@ -1,0 +1,129 @@
+/* Auto Complete element.  Want to center it.*/
+.sidenavChat .groups .autoCompleteDivElement {
+  /* Center horizontally
+  margin: 0 auto;
+  padding-left: 400px;
+  padding: 0 auto;
+    display: block;
+  margin-left: auto;
+  margin-right: auto;*/
+
+/*    float: inherit;   this makes the auto complete feature move, but there's no option to center it */
+
+/*  transform: translate(25%, 0%);  works but want something that just says center */
+  /* bottom three uses flexbox to center the auto complete element */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ /* The sidebar menu */
+.sidenavChat {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  /* width: 160px; Set the width of the sidebar */
+  width: 240px;
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  /*background-color: #111; */ /* Black */
+  background-color: #abc;
+  overflow-x: hidden;   /*Disable horizontal scroll */  
+  /*overflow-y:scroll;*/
+  /*overflow-x:scroll;*/
+  /*overflow: scroll;*/
+  padding-top: 20px;
+  inline-size: min-content; /*Makes side nav bar expand to min width of content. */
+}
+
+/* The navigation menu links */
+.sidenavChat a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+/* When mouse over saved group chats. */
+.sidenavChat li:hover {
+  color: #f1f1f1;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenavChat a:hover {
+  color: #f1f1f1;
+}
+
+/* Separates nav section with group section. */
+.sidenavChat .lineSeparator {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+  text-align:center;
+}
+
+/* 
+Modifies the font size for the Add Cancel html under the Groups text.  This handles showing/closing the auto complete.
+*/
+.sidenavChat .groups .addCancelSection a {
+		font-size: 15px;
+}
+
+.sidenavChat .groups {
+/*  padding: 6px 8px 6px 16px;*/
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #818181;
+  display: block;
+  /*overflow-x: auto;*/
+}
+
+/* This is just effecting the list of saved group chats.*/
+.sidenavChat .groups ul li {
+	font-size: 10px;
+
+	/*color: green;*//* this works.  Text in list are green.*/
+}
+
+/* This is for the <ul> element that contains the saved chat groups.  Does text align to be left and removes the bullets in the <ul> <li> tags*/
+.listSavedChatGroups {
+	text-align: left;
+	list-style-type: none;
+}
+
+/* This sets fontsize and color of the text creating new chat group.*/
+.temporaryFriendsChatGroup {
+	font-size: 10px;
+	color: yellow;
+}
+
+/* */
+.debugClass {
+ visibility: hidden;
+}
+
+
+/* Style page content */
+.mainChat {
+  /*margin-left: 160px; 220*/ /* Same as the width of the sidebar */
+  margin-left: 240px;
+  padding: 0px 10px;
+}
+
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenavChat {padding-top: 15px;}
+  .sidenavChat a {font-size: 18px;}
+} 
+
+/* Makes font size of list of group chats smaller. Also makes the spacing between group chats. */
+.groups li {
+	font-size: 10px;
+	padding-top:5px;
+	padding-bottom: 5px;
+}

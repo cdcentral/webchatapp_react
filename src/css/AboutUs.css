@@ -1,0 +1,44 @@
+.AboutUsMain {
+
+	height: 100%;
+	width: 100%;
+}
+
+/* Div encompassing the nav element */
+.aboutUsNavDiv {
+	line-height: 20vh;
+}
+
+.aboutUsNav {
+	/*
+	background-color: #ABABAB;
+	*/
+	/*height: 600%;*/
+	/*max-height: 600%;*/
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+	/*
+	line-height: 900%;
+	*/
+}
+/* The navigation menu links */
+.aboutUsNav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: inline;
+}
+
+/* When you mouse over the navigation links, change their color */
+.aboutUsNav a:hover {
+  color: #f1f1f1;
+}
+
+.aboutUsMainText {
+	text-align: center;
+	height: 60vh;
+
+		/* background-color: green; shows up when page loads up but then goes away */
+}
