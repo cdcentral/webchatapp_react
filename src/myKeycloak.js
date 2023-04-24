@@ -22,9 +22,9 @@ import Keycloak from "keycloak-js";
  See this link for more information on the keycloak object https://www.keycloak.org/docs/latest/securing_apps/#_javascript_adapter
  */
 const keycloak = new Keycloak({
-    url: 'http://localhost:8081/auth/',
-    realm: 'ReactChatApp',
-    clientId: 'chatApp'
+    url: process.env.REACT_APP_API_KEYCLOAK_URL,
+    realm: process.env.REACT_APP_API_REALM,
+    clientId: process.env.REACT_APP_API_CLIENT_ID
 });
 
 export default keycloak;

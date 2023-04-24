@@ -35,7 +35,7 @@ class MainApp extends React.Component {
             // contains user keycloak info passed from parent component.
             appKeycloak: props.parentKeycloak,
             // logout url to be invoked when user selects the Logout URL link, Replace the below with your keycloak url and the redirect_uri you want it to be
-            logoutUrl: 'http://localhost:8081/auth/realms/ReactChatApp/protocol/openid-connect/logout?redirect_uri=http://localhost:3000' // sample url: 'http://localhost:8081/auth/realms/ReactChatApp/protocol/openid-connect/logout?redirect_uri=http://localhost:3000'
+            logoutUrl: process.env.REACT_APP_API_LOGOUT_URL + process.env.REACT_APP_SELF_URL
         };
 
     }

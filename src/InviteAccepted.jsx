@@ -15,12 +15,12 @@ class InviteAccepted extends React.Component {
         super(props);
         this.state = {
             date: new Date(),
-            keycloakBaseUrl: 'http://localhost:8081/auth/',
+            keycloakBaseUrl: process.env.REACT_APP_API_KEYCLOAK_URL,
             successfulLogin: false,
             //keycloak: props.keycloak,
             logoutUrl: props.logoutUrl,
-            webappEndpoint: 'http://localhost:8080/react_chat_app_backend/InviteRequest',
-            inviteAcceptedEndpoint: 'http://localhost:8080/react_chat_app_backend/InviteAccepted',
+            webappEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/react_chat_app_backend/InviteRequest',
+            inviteAcceptedEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/InviteAccepted',
             userInvite: '',
             debugCounter: 0,
             intervalId: 0,
@@ -68,7 +68,7 @@ class InviteAccepted extends React.Component {
 
         keycloak.init({
             onLoad: 'login-required',
-            redirectUri: 'http://localhost:3000/InviteAccepted/?rid=' + requestId + '&process_id=100'
+            redirectUri: process.env.REACT_APP_SELF_URL +'/InviteAccepted/?rid=' + requestId + '&process_id=100'
         }).then(function (authenticated) {
             console.log(authenticated ? '[userLoginRegister] userLoginRegister() -> login-required called, user authenticated' : '[InviteAccepted] userLoginRegister() -> login-required called, user not authenticated'); // works.
             if (!authenticated) {

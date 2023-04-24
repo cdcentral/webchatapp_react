@@ -42,7 +42,7 @@ class MainPage extends React.Component {
         // Makes user login
         this.state.appKeycloak.init({
             onLoad: 'login-required',
-            redirectUri: 'http://localhost:3000/ChatPage'
+            redirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage'
         }).success(function () {
             console.log("keycloak init success");
         })

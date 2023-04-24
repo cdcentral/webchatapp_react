@@ -11,9 +11,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
  Global Keycloak object that points to the keycloak instance, realm and client app to verify/authenticate against.
  */
 var keycloak = new Keycloak({
-    url: 'http://localhost:8081/auth/',
-    realm: 'ReactChatApp',
-    clientId: 'chatApp'
+    url: process.env.REACT_APP_API_KEYCLOAK_URL,
+    realm: process.env.REACT_APP_API_REALM,
+    clientId: process.env.REACT_APP_API_CLIENT_ID
 });
 
 /*

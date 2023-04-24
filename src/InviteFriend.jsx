@@ -10,9 +10,9 @@ class InviteFriend extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            webappEndpoint: 'http://localhost:8080/react_chat_app_backend/InviteRequest',
+            webappEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/InviteRequest',
             date: new Date(),
-            keycloakBaseUrl: 'http://localhost:8081/auth/',
+            keycloakBaseUrl: process.env.REACT_APP_API_KEYCLOAK_URL,
             logoutUrl: props.logoutUrl,
             intervalId: 0,
             backendResponse: null, /* Contains response from java web application. */
@@ -46,7 +46,7 @@ class InviteFriend extends React.Component {
             var localKC = checkLocalStorage();
             if (localKC === undefined || localKC === null || localKC.authenticated === undefined || localKC.authenticated === null || localKC.authenticated === false) {
                 // user not logged in, return to main page.
-                window.location.replace("http://localhost:3000");
+                window.location.replace(process.env.REACT_APP_SELF_URL +'/');
             } else {
                 this.setState({appKeycloak: localKC});
             }
@@ -119,7 +119,7 @@ class InviteFriend extends React.Component {
             this.state.appKeycloak.init({
                 onLoad: 'check-sso',
                 enableLogging: true,
-                silentCheckSsoRedirectUri: 'http://localhost:3000/InviteFriend' // with this here, we can finally get to the success below.
+                silentCheckSsoRedirectUri: process.env.REACT_APP_SELF_URL +'/InviteFriend' // with this here, we can finally get to the success below.
             }).then(function (authenticated) {
 
                 if (authenticated) {
@@ -128,7 +128,7 @@ class InviteFriend extends React.Component {
                 } else
                 {
                     console.log('[InviteFriend] Timer() -> check-sso called user not authenticated'); // works.
-                    window.location.replace('http://localhost:3000/'); // route user to login page.
+                    window.location.replace(process.env.REACT_APP_SELF_URL +'/'); // route user to login page.
                 }
             }.bind(this)).catch(function () {
                 console.log('[InviteFriend] Timer() -> check-sso called, error trying to call check-sso');
