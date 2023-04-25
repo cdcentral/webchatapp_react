@@ -75,7 +75,7 @@ class MainApp extends React.Component {
                                     parentChatGroupObj = {this.props.parentChatGroupData} persistParentChatGroupDataMethod = {this.props.persistParentChatGroupDataMethod} / > } />
                             <Route path="InviteFriend" element={ < InviteFriend logoutUrl = {this.state.logoutUrl}
                                     persistKeycloakObj = {this.props.parentPersistKeycloakMethod} keycloakObj = {this.props.parentKeycloak} / > } />
-                            <Route path="InviteAccepted" element={ < InviteAccepted logoutUrl = {this.state.logoutUrl} / > } />
+                            <Route path="InviteAccepted" element={ < InviteAccepted keycloakObj = {this.props.parentKeycloak} logoutUrl = {this.state.logoutUrl} / > } />
                             <Route path="AboutUs" element={ < AboutUs logoutUrl = {this.state.logoutUrl} / > } />
                             <Route path="ContactUs" element={ < ContactUs logoutUrl = {this.state.logoutUrl} / > } />
                         </Routes>
