@@ -19,7 +19,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "REACT_APP_TEST_ENV_VAR=TEST_DATA react-scripts start",
     "build": "webpack --mode production",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

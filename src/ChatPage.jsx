@@ -273,8 +273,8 @@ setStateCallBack (saveData) {
 componentDidMount() {
 
     // 10,000 ms = 10 seconds
-    this.setState({getMessagesTimerId: setInterval(this.getLatestMessages, 10000),
-            getSavedGroupTimerId: setInterval(this.getUsersSavedGroupsFromDB, 10000)});
+    this.setState({getMessagesTimerId: setInterval(this.getLatestMessages, process.env.REACT_APP_GET_MESSAGES_INTERVAL_SECONDS),
+            getSavedGroupTimerId: setInterval(this.getUsersSavedGroupsFromDB, process.env.REACT_APP_GET_SAVED_GROUPS_INTERVAL_SECONDS)});
     if (this.state.appKeycloak.authenticated !== undefined && this.state.appKeycloak.authenticated !== null &&
                     this.state.appKeycloak.authenticated === true) {
         // keycloak object is still valid and authenticated.
