@@ -3,7 +3,6 @@ import React  from 'react';
 import {  Link } from "react-router-dom";
 import './css/InviteAccepted.css';
 
-import keycloak from './myKeycloak.js';
 // test email link to use on front end (reactjs which will send a request here).
 // http://localhost:3000/InviteAccepted/?rid=1
 
@@ -15,12 +14,12 @@ class InviteAccepted extends React.Component {
         super(props);
         this.state = {
             date: new Date(),
-            keycloakBaseUrl: 'http://localhost:8081/auth/',
+            keycloakBaseUrl: process.env.REACT_APP_API_KEYCLOAK_URL,
             successfulLogin: false,
-            //keycloak: props.keycloak,
+            appKeycloak: props.keycloakObj,
             logoutUrl: props.logoutUrl,
-            webappEndpoint: 'http://localhost:8080/react_chat_app_backend/InviteRequest',
-            inviteAcceptedEndpoint: 'http://localhost:8080/react_chat_app_backend/InviteAccepted',
+            webappEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/react_chat_app_backend/InviteRequest',
+            inviteAcceptedEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/InviteAccepted',
             userInvite: '',
             debugCounter: 0,
             intervalId: 0,
@@ -66,9 +65,9 @@ class InviteAccepted extends React.Component {
         requestId = searchParams.get('rid');
 
 
-        keycloak.init({
+        this.state.appKeycloak.init({
             onLoad: 'login-required',
-            redirectUri: 'http://localhost:3000/InviteAccepted/?rid=' + requestId + '&process_id=100'
+            redirectUri: process.env.REACT_APP_SELF_URL +'/InviteAccepted/?rid=' + requestId + '&process_id=100'
         }).then(function (authenticated) {
             console.log(authenticated ? '[userLoginRegister] userLoginRegister() -> login-required called, user authenticated' : '[InviteAccepted] userLoginRegister() -> login-required called, user not authenticated'); // works.
             if (!authenticated) {
@@ -76,7 +75,7 @@ class InviteAccepted extends React.Component {
                 console.log('[userLoginRegister] userLoginRegister () -> login-required called, user is authenticated, calling updateToken.');
 
                 // update the users token
-                keycloak.updateToken(2)
+                this.state.appKeycloak.updateToken(2)
                         .success(this.loadData)
                         .error(() => {
                             console.log('[InviteAccepted] userLoginRegister() ->Failed to load data.  User is logged out??');
@@ -152,20 +151,20 @@ class InviteAccepted extends React.Component {
      * loadData - This is a function call back to print out keycloak user status.
      ********************************************************************/
     loadData() {
-        console.log('[InviteAccepted] loadData () -> keycloak subject: ' + keycloak.subject);
-        if (keycloak.idToken) {
-            console.log('[InviteAccepted] loadData() -> IDToken -> username' + keycloak.idTokenParsed.preferred_username + ', email: ' + keycloak.idTokenParsed.email +
-                    ', name: ' + keycloak.idTokenParsed.name + ', given name: ' + keycloak.idTokenParsed.given_name + ', family name: ' + keycloak.idTokenParsed.family_name);
+        console.log('[InviteAccepted] loadData () -> keycloak subject: ' + this.state.appKeycloak.subject);
+        if (this.state.appKeycloak.idToken) {
+            console.log('[InviteAccepted] loadData() -> IDToken -> username' + this.state.appKeycloak.idTokenParsed.preferred_username + ', email: ' + this.state.appKeycloak.idTokenParsed.email +
+                    ', name: ' + this.state.appKeycloak.idTokenParsed.name + ', given name: ' + this.state.appKeycloak.idTokenParsed.given_name + ', family name: ' + this.state.appKeycloak.idTokenParsed.family_name);
         } else {
-            keycloak.loadUserProfile(function () {
-                console.log('[InviteAccepted] loadData()-> loadUserProfile() -> Account Service -> username: ' + keycloak.profile.username + ', email: ' + keycloak.profile.email +
-                        ', first name: ' + keycloak.profile.firstName + ', last name: ' + keycloak.profile.lastName);
+            this.state.appKeycloak.loadUserProfile(function () {
+                console.log('[InviteAccepted] loadData()-> loadUserProfile() -> Account Service -> username: ' + this.state.appKeycloak.profile.username + ', email: ' + this.state.appKeycloak.profile.email +
+                        ', first name: ' + this.state.appKeycloak.profile.firstName + ', last name: ' + this.state.appKeycloak.profile.lastName);
             }, function () {
                 console.log('[InviteAccepted] loadData()-> Failed to retrieve user details. Please enable claims or account role');
             });
         }
 
-        if (keycloak.authenticated) {
+        if (this.state.appKeycloak.authenticated) {
             console.log('[InviteAccepted loadData() -> authenticated. Send accepted status to back end.');
             this.updateAcceptedStatus();
         }

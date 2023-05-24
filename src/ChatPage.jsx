@@ -17,13 +17,13 @@ constructor(props) {
 super(props);
         this.state = {
 
-            friendsListEndpoint: 'http://localhost:8080/react_chat_app_backend/GetFriendsList',
-            groupChatCreateEndpoint: 'http://localhost:8080/react_chat_app_backend/CreateGroupChat',
-            getUsersSavedGroupsEndpoint: 'http://localhost:8080/react_chat_app_backend/GetUsersSavedChatGroups', //GetUsersSavedChatGroups
-            deleteChatGroupEndpoint: 'http://localhost:8080/react_chat_app_backend/DeleteChatGroup',
-            removeFromChatGroupEndpoint: 'http://localhost:8080/react_chat_app_backend/RemoveFromChatGroup', // this should make deleteChatGroupEndpoint obsolete.
-            postMessageEndpoint: 'http://localhost:8080/react_chat_app_backend/PostMessageServlet',
-            getLatestMessagesEndpoint: 'http://localhost:8080/react_chat_app_backend/GetLatestMessages',
+            friendsListEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetFriendsList',
+            groupChatCreateEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/CreateGroupChat',
+            getUsersSavedGroupsEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetUsersSavedChatGroups', //GetUsersSavedChatGroups
+            deleteChatGroupEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/DeleteChatGroup',
+            removeFromChatGroupEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/RemoveFromChatGroup', // this should make deleteChatGroupEndpoint obsolete.
+            postMessageEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/PostMessageServlet',
+            getLatestMessagesEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetLatestMessages',
             getMessagesTimerId: - 1, // used to set and clear the timer for getting the latest messages
             getSavedGroupTimerId: - 1, // userd to set and clear the timer for getting the saved chat groups
             existingFriends: '',
@@ -273,8 +273,8 @@ setStateCallBack (saveData) {
 componentDidMount() {
 
     // 10,000 ms = 10 seconds
-    this.setState({getMessagesTimerId: setInterval(this.getLatestMessages, 10000),
-            getSavedGroupTimerId: setInterval(this.getUsersSavedGroupsFromDB, 10000)});
+    this.setState({getMessagesTimerId: setInterval(this.getLatestMessages, process.env.REACT_APP_GET_MESSAGES_INTERVAL_SECONDS),
+            getSavedGroupTimerId: setInterval(this.getUsersSavedGroupsFromDB, process.env.REACT_APP_GET_SAVED_GROUPS_INTERVAL_SECONDS)});
     if (this.state.appKeycloak.authenticated !== undefined && this.state.appKeycloak.authenticated !== null &&
                     this.state.appKeycloak.authenticated === true) {
         // keycloak object is still valid and authenticated.
@@ -311,14 +311,14 @@ componentDidMount() {
                 this.state.appKeycloak.init({
                 onLoad: 'login-required',
                         enableLogging: true,
-                        redirectUri: 'http://localhost:3000/ChatPage'
+                        redirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage'
                         //onLoad: 'check-sso',
                         //enableLogging: true, 
-                        //silentCheckSsoRedirectUri: 'http://localhost:3000/ChatPage'
+                        //silentCheckSsoRedirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage'
                 }).then(function(authenticated) {
                     if (!authenticated) {
                         // if user still not authenticated then re-routes user to the main page.
-                        window.location.replace('http://localhost:3000/');
+                        window.location.replace(process.env.REACT_APP_SELF_URL +'/');
                     } else {
                         // if authenticated then will reload the users data and updates the token.
                         this.reloadData('componentDidMount-page refresh'); // componentDidMount, page refresh
@@ -377,7 +377,7 @@ handleLoad() {
         this.state.appKeycloak.init({
         onLoad: 'check-sso',
                 enableLogging: true,
-                silentCheckSsoRedirectUri: 'http://localhost:3000/ChatPage'
+                silentCheckSsoRedirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage'
         }).then(function(authenticated) {
         console.log('[LoggedInPage] handleLoad() -> check-sso authenticated: ' + authenticated);
             if (authenticated) {
@@ -529,7 +529,7 @@ getAcceptedFriends(passedInKeycloakObject)  {
  this.state.appKeycloak.init({
  onLoad: 'check-sso',
  enableLogging: true, 
- silentCheckSsoRedirectUri: 'http://localhost:3000/ChatPage' // with this here, we can finally get to the success below.
+ silentCheckSsoRedirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage' // with this here, we can finally get to the success below.
  }).then(function(authenticated) {
  
  if (!authenticated) {
@@ -537,7 +537,7 @@ getAcceptedFriends(passedInKeycloakObject)  {
  //this.state.appKeycloak.clearToken();
  // if user isn't authenticated then route to main page.   So this routes the user, but this is being false to often.
  // similar behavior as an HTTP redirect
- //window.location.replace("http://localhost:3000/");
+ //window.location.replace(process.env.REACT_APP_SELF_URL +'/");
  //// similar behavior as clicking on a link
  //window.location.href = "http://stackoverflow.com";
  } else {

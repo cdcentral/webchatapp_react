@@ -10,7 +10,7 @@ class AboutUs extends React.Component {
         super(props);
         this.state = {
             date: new Date(),
-            keycloakBaseUrl: 'http://localhost:8081/auth/',
+            keycloakBaseUrl: process.env.REACT_APP_API_KEYCLOAK_URL,
             logoutUrl: props.logoutUrl,
             appKeycloak: props.keycloakObj,
             intervalId: -1
