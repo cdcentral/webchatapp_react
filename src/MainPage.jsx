@@ -4,7 +4,7 @@ import Header from './Header';
 import { Outlet, Link } from "react-router-dom";
 import Footer from './Footer';
 import {checkLocalStorage, handleLogout} from './Common.js';
-
+import { useSelector, useDispatch } from 'react-redux'
 /*********************************************
  *
  *********************************************/
@@ -38,20 +38,34 @@ class MainPage extends React.Component {
     initKeycloak() {
 
         console.log('init Keycloak -> login required');
-
-        // Makes user login
+//
+//        kc = useSelector((state) => state.keycloak.keycloak);
+//        
+//        // Makes user login
+//        kc.init({
+//            onLoad: 'login-required',
+//            redirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage'
+//        }).success(function () {
+//            console.log("keycloak init success");
+//        })
+//        .error(function (error) {
+//            console.log('keycloak init error: ' + error);
+//        })
+//        .catch(function () {
+//            console.log('keycloak init failed');
+//        });
         this.state.appKeycloak.init({
             onLoad: 'login-required',
             redirectUri: process.env.REACT_APP_SELF_URL +'/ChatPage'
         }).success(function () {
             console.log("keycloak init success");
         })
-                .error(function (error) {
-                    console.log('keycloak init error: ' + error);
-                })
-                .catch(function () {
-                    console.log('keycloak init failed');
-                });
+        .error(function (error) {
+            console.log('keycloak init error: ' + error);
+        })
+        .catch(function () {
+            console.log('keycloak init failed');
+        });
     }
 
     /*****************************************************
@@ -82,17 +96,17 @@ class MainPage extends React.Component {
         let inviteFriendHTML = <span></span>;
         if (userAuthenticated) {
             inviteFriendHTML =
-                    <span>
-                        <Link to="/InviteFriend">InviteFriend</Link> |  {" "}
-                    </span>;
+                <span>
+                    <Link to="/InviteFriend">InviteFriend</Link> |  {" "}
+                </span>;
         }
         // The logout link should only appear if the user is authenticated and logged in.
         let logoutLinkHTML = <span></span>;
         if (userAuthenticated) {
             logoutLinkHTML =
-                    <span>
-                        <a><span onClick={() => handleLogout(this.state.logoutUrl)}>Logout</span> </a> |{ " "}
-                    </span>;
+                <span>
+                    <a><span onClick={() => handleLogout(this.state.logoutUrl)}>Logout</span> </a> |{ " "}
+                </span>;
         }
         // *************************************************************************
         return (

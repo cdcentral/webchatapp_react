@@ -9,6 +9,8 @@ import FreeSoloCreateOptionV3 from './FreeSoloCreateOptionV3';
 
 import AlertDialogue from './AlertDialogue';
 
+import AvatarChat from './chat_page/AvatarChat';
+
 /******************************************************************************************************
  * This will contain the chat page.  Here's where the user can send and receive messages.
  ******************************************************************************************************/
@@ -18,6 +20,7 @@ super(props);
         this.state = {
 
             friendsListEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetFriendsList',
+            friendsAvatarsEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetFriendsAvatars',
             groupChatCreateEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/CreateGroupChat',
             getUsersSavedGroupsEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetUsersSavedChatGroups', //GetUsersSavedChatGroups
             deleteChatGroupEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/DeleteChatGroup',
@@ -26,6 +29,7 @@ super(props);
             getLatestMessagesEndpoint: process.env.REACT_APP_API_JAVA_BACKEND_BASE_URL + '/GetLatestMessages',
             getMessagesTimerId: - 1, // used to set and clear the timer for getting the latest messages
             getSavedGroupTimerId: - 1, // userd to set and clear the timer for getting the saved chat groups
+            friendsAvatars: '',
             existingFriends: '',
             groupAddSelected: false,
             gotFriendList: false,
@@ -33,6 +37,8 @@ super(props);
             //savedChatGroupsArr: [], // array of saved chat groups in the DB
             savedChatGroupsObjectArr: [], // array of saved chat groups in db.  this will include the group id and the list of names.
             chatGroupMessages: '', // will contain the groups chats/messages retrieved from the DB.
+            currentMessagesFromDB: '', // used to figure out who posted new message, will be helpful to know which avatar to show.
+            prevMessagesFromDB: '',
             // user's name to be displayed in the welcome/logged in page.
             usersName: '',
             // boolean that will be used to open the delete confirmation dialogue
@@ -60,6 +66,7 @@ super(props);
         this.handleCancelGroupAdd = this.handleCancelGroupAdd.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.getAcceptedFriends = this.getAcceptedFriends.bind(this);
+        this.getAvatars = this.getAvatars.bind(this);
         this.handleUserSelected = this.handleUserSelected.bind(this);
         this.sendCreateGroupChat = this.sendCreateGroupChat.bind(this);
         this.selectGroupToChatV2 = this.selectGroupToChatV2.bind(this);
@@ -131,8 +138,9 @@ handleConfirmDeletion() {
             // this should set groupID and groupMembers to null
             this.props.persistParentChatGroupDataMethod( - 1, '');
             this.setState({
-            parentChatGroupObj: '', // removes current selected group chat
-                    chatGroupMessages: ''// clears out text history
+                parentChatGroupObj: '', // removes current selected group chat
+                chatGroupMessages: '',// clears out text history
+                currentMessagesFromDB: '' // clears out
             });
     } else {
     console.log('[ChatPage] handleConfirmDeletion() -> failed to delete.');
@@ -281,6 +289,7 @@ componentDidMount() {
         console.log('[ChatPage] componentDidMount user keycloak object is still authenticated and valid');
         this.setState({usersName: this.state.appKeycloak.idTokenParsed.name});
         this.getAcceptedFriends(this.state.appKeycloak);
+        this.getAvatars();
         this.getUsersSavedGroupsFromDB(); // componentDidMount
         this.setStateCallBack(true);
     } else {
@@ -304,6 +313,7 @@ componentDidMount() {
                     console.log('[ChatPage] componentDidMount() -> localKC from localStorage isn\'t null.');
                     this.setState({usersName: localKC.idTokenParsed.name});
                     this.getAcceptedFriends(localKC);
+                    this.getAvatars();
                     this.getUsersSavedGroupsFromDB(); // componentDidMount
 
                     return;
@@ -330,7 +340,7 @@ componentDidMount() {
         } else {
         // page was not refeshed, so calling handleLoad
         //console.log( "[LoggedInPage] componentDidMount() -> This page is not reloaded");
-        this.handleLoad();
+            this.handleLoad();
         }
     }
 }
@@ -370,6 +380,7 @@ handleLoad() {
         this.reloadData('handleLoad - user is authenticated'); // handleLoad() user is authenticated
         this.setState({usersName: this.state.appKeycloak.idTokenParsed.name}, this.setStateCallBack(true));
         this.getAcceptedFriends();
+        this.getAvatars();
     } else {
 
         //console.log('[LoggedInPage] handleLoad() -> user not authenticated.  Calling keycloak init check-sso');
@@ -410,6 +421,7 @@ loadData () {
     //console.log('[ChatPage] loadData() -> user id: ' + this.state.appKeycloak.subject  + ', still authenticated? ' + this.state.appKeycloak.authenticated);
     if (this.state.appKeycloak.authenticated) {
         this.getAcceptedFriends();
+        this.getAvatars();
     }
     if (this.state.appKeycloak.idToken) {
 
@@ -468,7 +480,51 @@ reloadData (methodCalledFrom) {
          */
         //;
 }
+    /*****************************************************
+     * Make http request to get avatars from database.
+     *****************************************************/
+    getAvatars() {
 
+        var dataToSend = new FormData();
+
+        if (this.state.appKeycloak === undefined || this.state.appKeycloak.authenticated === undefined) {
+            console.log("keycloak object is undefined.");
+
+            // local storage
+            var localKC = checkLocalStorage();
+            dataToSend.append("userKeycloakId", localKC.subject);
+            dataToSend.append("userKeycloakEmail", localKC.idTokenParsed.email);
+
+        } else {
+            dataToSend.append("userKeycloakId", this.state.appKeycloak.subject);
+            dataToSend.append("userKeycloakEmail", this.state.appKeycloak.idTokenParsed.email);
+        }
+
+        console.log('user keycloak id: ' + dataToSend.get("userKeycloakId"));
+
+        /*	fetch request	 */
+        fetch(this.state.friendsAvatarsEndpoint, {
+        method: 'POST',
+                body: dataToSend,
+                headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+                }
+        })
+        .then(function(response) {
+        var localResponse = response.json();
+                return localResponse;
+        })
+        .then(function(jsonResponse) {
+            console.log('[Settings] getAvatars fetch api:  ' + JSON.stringify(jsonResponse));
+            let index = 0;
+            for (index = 0; index < jsonResponse.friends.length; index++) {
+                console.log('[Settings] avatar image only -> index ' + index + ' -> ' + jsonResponse.friends[index].avatarImage);
+
+                this.setState({ friendsAvatars: jsonResponse.friends,
+                    gotFriendList: true});
+            }
+        }.bind(this));
+    }
 /**************************************************************************
  *  Will get list of accepted friends.  This will make an http request to the back end.
  * This is not the list of saved group chats of your friends.
@@ -495,13 +551,13 @@ getAcceptedFriends(passedInKeycloakObject)  {
             return localResponse;
     })
     .then(function(jsonResponse) {
-    console.log('[getAcceptedFriends] fetch api:  ' + JSON.stringify(jsonResponse));
-            // consider using sessionStorage for storing existingFriends
-            this.setState({
+        console.log('[getAcceptedFriends] fetch api:  ' + JSON.stringify(jsonResponse));
+        // consider using sessionStorage for storing existingFriends
+        this.setState({
             existingFriends: jsonResponse.friends,
-                    gotFriendList: true}, function() {
+            gotFriendList: true}, function() {
             console.log('[getAcceptedFriends] existing friends ' + this.state.existingFriends + ' -- json stringify ' + JSON.stringify(this.state.existingFriends));
-            });
+        });
     }.bind(this));
 }
 
@@ -727,7 +783,8 @@ selectGroupToChatV2(data) {
     // - in the call back, get the latest messages for this newly selected chat group.
     this.setState({
         //currentChatGroupSelected: data.chatGroups.groupMembers,	// set currentChatGroupSelected
-        chatGroupMessages: ''											// blank out existing group chat box
+        chatGroupMessages: '',							// blank out existing group chat box
+        currentMessagesFromDB: ''
         }, function() {
         this.getLatestMessages();
     });
@@ -786,6 +843,7 @@ getLatestMessages() {
                     var messagesFromDB;
                     messagesFromDB = jsonResponse.messages;
                     console.log('[ChatPage] getLatestMessages()-> # of messages: ' + messagesFromDB.length);
+
                     var formattedContent = '';
                     for (let i = 0; i < messagesFromDB.length; i++) {
 
@@ -794,7 +852,11 @@ getLatestMessages() {
                         formattedContent += '\n--------------------------------------------\n';
                     }
 
-                    this.setState({chatGroupMessages: formattedContent});
+                    this.setState({
+                        // Helpful to know who just posted so we can show their avatar!
+                        prevMessagesFromDB: this.state.currentMessagesFromDB,
+                        currentMessagesFromDB: messagesFromDB,
+                        chatGroupMessages: formattedContent});
                 }
         } else {
             console.log('[ChatPage] getLatestMessages()-> jsonResponse is null.');
@@ -831,10 +893,12 @@ submitMessage(removedUserMessage) {
         if (this.state.appKeycloak !== undefined && this.state.appKeycloak.idTokenParsed !== undefined) {
             dataToSend.append("keycloakUserId", this.state.appKeycloak.subject);
             dataToSend.append("keycloakUserName", this.state.appKeycloak.idTokenParsed.preferred_username);
+            dataToSend.append("keycloakUserEmail", this.state.appKeycloak.idTokenParsed.email);
         } else {
             var localKC = checkLocalStorage();
             dataToSend.append("keycloakUserId", localKC.subject);
             dataToSend.append("keycloakUserName", localKC.idTokenParsed.preferred_username);
+            dataToSend.append("keycloakUserEmail", localKC.idTokenParsed.email);
         }
 
         // send http request to store the latest message to the chat group.  This will be stored in the DB.
@@ -869,8 +933,59 @@ doNothing() {
  ***************************************************************************************************/
 render() {
 
+    // gets friends avatars.
+    const friendsAvatars = this.state.friendsAvatars;
+    var avatarHTML;// = <AvatarChat />
+    if(friendsAvatars.length > 0) {
+        // AvatarChat should show should show IMAGE ONLY if there's a new Message, and show from who..
+    }
+    const currentMsgs = this.state.currentMessagesFromDB;
+    const prevMsgs = this.state.prevMessagesFromDB;
+    if (prevMsgs !== undefined && currentMsgs !== undefined) {
+//
+//        if (prevMsgs.length !== currentMsgs.length) {
+//            console.log('[ChatPage-render] # of friend avatars: ' + friendsAvatars.length + ', curr Msgs size: ' + currentMsgs.length + ', prev Msgs size: ' + prevMsgs.length);
+//            avatarHTML = <AvatarChat currentMsgs={currentMsgs} prevMsgs={prevMsgs} friendsAvatars={friendsAvatars}/>
+//        } else {
+//            avatarHTML = <div>waiting for something to happen</div>
+//        }
+
+        // see if last message for each is the same.
+        var prevMsgIndex = prevMsgs.length - 1;
+        var currMsgIndex = currentMsgs.length -1;
+        console.log('[ChatPage-render] prevMsgIndex: ' + prevMsgIndex + ', currMsgIndex: ' + currMsgIndex);
+        if (prevMsgIndex >= 0 && currMsgIndex >= 0) {
+            if (prevMsgs[prevMsgIndex].msg_timestamp !== currentMsgs[currMsgIndex].msg_timestamp) {
+                // new message came in. extract user/friend from this.  use this as the key to show the avatar.
+                console.log('[ChatPage-render] user email that just posted message -> ' + currentMsgs[currMsgIndex].user_email);
+                // with email iterate through friendsAvatars to find the image to pass in.
+                if (friendsAvatars.length >= 0) {
+                    for (var ix = 0; ix < friendsAvatars.length; ix++) {
+                        if (currentMsgs[currMsgIndex].user_email === friendsAvatars[ix].friend) {
+                            console.log('[ChatPage-render] AvatarChat component with following avatar -> ' + friendsAvatars[ix].avatarImageString);
+                            const avatarImageToPassIn = friendsAvatars[ix].avatarImageString;
+                            avatarHTML = <AvatarChat friendAvatar={avatarImageToPassIn} />
+                        }
+                    }
+                }
+            }
+        }
+
+//        //messagesFromDB[i].msg_timestamp       [i].user_name
+    }
+
+
     // Retrieves users username from keycloak object.
     const UserHTML = (this.state.usersName !== undefined ? this.state.usersName : 'no name');
+    const UserEmail = <div></div>
+//    if (this.state.appKeycloak !== undefined && this.state.appKeycloak.idTokenParsed != undefined) {
+//        UserEmail = this.state.appKeycloak.idTokenParsed.email;
+//    } else {
+//        var localKC = localStorage.getItem('keycloakInfo');
+//        localKC = JSON.parse(localKC);
+//        UserEmail = localKC.idTokenParsed.email;
+//    }
+    
     // For rendering list of group chats of friends **************************************************************************************************************************
 
     var savedChatGroupsHTML;
@@ -940,17 +1055,18 @@ render() {
     const renderPage = this.state.appKeycloak.authenticated !== undefined && this.state.appKeycloak.authenticated !== null &&
     this.state.appKeycloak.authenticated === true;
     return (
-        <div>
+        <div >
             {renderPage &&
-            <div className="ChatPage">
+            <div className="ChatPage flex-container">
 
-                <nav className="sidenavChat">
+                <nav className="sidenavChat flex-child">
 
                     <Link to="/">Home</Link> 
                     <Link to="/AboutUs">AboutUs</Link> 
                     <Link to="/ContactUs">ContactUs</Link> 
                     <a><span onClick={() => handleLogout(this.state.logoutUrl)}>Logout</span> </a>
                     <Link to="/InviteFriend">Invite</Link>
+                    <Link to="/Settings">Settings</Link>
                     <div className="lineSeparator">
                         ---------------------
                         {/* intended to separate nav with group chats */}
@@ -965,7 +1081,8 @@ render() {
                     </div>
                 </nav>
 
-                <div className="mainChat">
+                <div className="flex-child">
+                {/*<div className="mainChat float-child">*/}
                     <header className="ChatPage-header">
                         {/* Need a left panel or option to create chat groups */}
 
@@ -976,7 +1093,7 @@ render() {
                                confirmDelete={this.handleConfirmDeletion} cancelDelete={this.handleCancelDeletion} />
 
                         <h1>Chat.</h1>
-                        <h2 id="welcomeHeader"> Welcome {UserHTML}! </h2>
+                        <h2 id="welcomeHeader"> Welcome {UserHTML}! {UserEmail}</h2>
                         <p>You're now logged in!</p>
                         {/*
                          <p>Selected Chat {this.state.parentChatGroupObj.groupMembers}</p>
@@ -995,6 +1112,11 @@ render() {
                         {/*      </form> */}
                     </header>
                     <br/><br/>
+                </div>
+
+                <div className="flex-child">
+                    {avatarHTML}
+{/*                    <AvatarChat />       */}
                 </div>
             </div>
             }

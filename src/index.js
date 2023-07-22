@@ -5,6 +5,11 @@ import  Keycloak from 'keycloak-js';
 
 import MainApp from './MainApp';
 
+import { Provider } from 'react-redux';
+import store from './app/store';
+
+import {Counter} from './features/counter/Counter';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 console.log('Test reading environment variable ' + process.env.REACT_APP_TEST_ENV_VAR);
@@ -53,8 +58,16 @@ function persistChatGroupData(localChatGroupID, localChatGroupMembers) {
 /* Defined and passed as a prop to another class, but not actively used.*/
 
 root.render(
-        <MainApp parentKeycloak={keycloak} parentPersistKeycloakMethod={persistKeycloakObjectIndex} 
-                 parentChatGroupData={chatGroupObj} persistParentChatGroupDataMethod={persistChatGroupData} />
+        <Provider store={store}>
+
+            <MainApp parentKeycloak={keycloak} parentPersistKeycloakMethod={persistKeycloakObjectIndex} 
+                     parentChatGroupData={chatGroupObj} persistParentChatGroupDataMethod={persistChatGroupData} />
+{/*
+            <Counter />
+ */}
+
+        </Provider>
+
         );
 
 // If you want to start measuring performance in your app, pass a function
