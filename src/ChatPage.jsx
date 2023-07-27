@@ -933,29 +933,23 @@ doNothing() {
  ***************************************************************************************************/
 render() {
 
-    // gets friends avatars.
+    // *********************************************************
+    // Gets Friends Avatars and sees generates HTML for Avatar of user who just posted a message.
+    // *********************************************************
     const friendsAvatars = this.state.friendsAvatars;
-    var avatarHTML;// = <AvatarChat />
-    if(friendsAvatars.length > 0) {
-        // AvatarChat should show should show IMAGE ONLY if there's a new Message, and show from who..
-    }
+    var avatarHTML;
     const currentMsgs = this.state.currentMessagesFromDB;
     const prevMsgs = this.state.prevMessagesFromDB;
     if (prevMsgs !== undefined && currentMsgs !== undefined) {
-//
-//        if (prevMsgs.length !== currentMsgs.length) {
-//            console.log('[ChatPage-render] # of friend avatars: ' + friendsAvatars.length + ', curr Msgs size: ' + currentMsgs.length + ', prev Msgs size: ' + prevMsgs.length);
-//            avatarHTML = <AvatarChat currentMsgs={currentMsgs} prevMsgs={prevMsgs} friendsAvatars={friendsAvatars}/>
-//        } else {
-//            avatarHTML = <div>waiting for something to happen</div>
-//        }
 
         // see if last message for each is the same.
         var prevMsgIndex = prevMsgs.length - 1;
         var currMsgIndex = currentMsgs.length -1;
         console.log('[ChatPage-render] prevMsgIndex: ' + prevMsgIndex + ', currMsgIndex: ' + currMsgIndex);
         if (prevMsgIndex >= 0 && currMsgIndex >= 0) {
+
             if (prevMsgs[prevMsgIndex].msg_timestamp !== currentMsgs[currMsgIndex].msg_timestamp) {
+
                 // new message came in. extract user/friend from this.  use this as the key to show the avatar.
                 console.log('[ChatPage-render] user email that just posted message -> ' + currentMsgs[currMsgIndex].user_email);
                 // with email iterate through friendsAvatars to find the image to pass in.
@@ -970,24 +964,14 @@ render() {
                 }
             }
         }
-
-//        //messagesFromDB[i].msg_timestamp       [i].user_name
     }
 
 
-    // Retrieves users username from keycloak object.
-    const UserHTML = (this.state.usersName !== undefined ? this.state.usersName : 'no name');
+    // Retrieves users username from keycloak object and Email and displays in Welcome text. *************************************************
+    const UserHTML = (this.state.usersName !== undefined ? this.state.usersName : 'no name')
     const UserEmail = <div></div>
-//    if (this.state.appKeycloak !== undefined && this.state.appKeycloak.idTokenParsed != undefined) {
-//        UserEmail = this.state.appKeycloak.idTokenParsed.email;
-//    } else {
-//        var localKC = localStorage.getItem('keycloakInfo');
-//        localKC = JSON.parse(localKC);
-//        UserEmail = localKC.idTokenParsed.email;
-//    }
-    
-    // For rendering list of group chats of friends **************************************************************************************************************************
 
+    // For rendering list of group chats of friends **************************************************************************************************************************
     var savedChatGroupsHTML;
     // see about generating friends list out of object array
     const renderChatGroupObjects = this.state.savedChatGroupsObjectArr;
@@ -1032,7 +1016,6 @@ render() {
             </span>
         </div>;
     }
-// *******************************************************************************************************************************
 
     // This part handles when user is actively creating a chat group. //  *******************************************************
     // Once change group is finalized then this html will be blanked out // *****************************************************
@@ -1052,8 +1035,9 @@ render() {
 // *******************************************************************************************************************************
 
     // will only render anything on the page if the appkeycloak object is an authenticated user.
-    const renderPage = this.state.appKeycloak.authenticated !== undefined && this.state.appKeycloak.authenticated !== null &&
-    this.state.appKeycloak.authenticated === true;
+    const renderPage = (this.state.appKeycloak.authenticated !== undefined && this.state.appKeycloak.authenticated !== null &&
+        this.state.appKeycloak.authenticated === true);
+
     return (
         <div >
             {renderPage &&
@@ -1095,9 +1079,7 @@ render() {
                         <h1>Chat.</h1>
                         <h2 id="welcomeHeader"> Welcome {UserHTML}! {UserEmail}</h2>
                         <p>You're now logged in!</p>
-                        {/*
-                         <p>Selected Chat {this.state.parentChatGroupObj.groupMembers}</p>
-                         */}
+
                         <p>Selected Chat: {this.props.parentChatGroupObj.groupMembers}</p>
                         {/*	  <form> */}
                         <label>Chat:</label>
@@ -1116,7 +1098,6 @@ render() {
 
                 <div className="flex-child">
                     {avatarHTML}
-{/*                    <AvatarChat />       */}
                 </div>
             </div>
             }
