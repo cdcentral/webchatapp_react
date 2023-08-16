@@ -6,7 +6,7 @@ import './css/Settings.css';
 import React  from 'react';
 import {checkLocalStorage, handleLogout} from './Common.js';
 import {  Link } from "react-router-dom";
-import ImageUploader from './ImageUploader';
+//import ImageUploader from './ImageUploader';
 import ImageUploaderV2 from './ImageUploaderV2';
 
 /**

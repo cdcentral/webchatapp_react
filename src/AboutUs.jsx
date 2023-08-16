@@ -2,7 +2,7 @@ import './css/AboutUs.css';
 import React  from 'react';
 import { Link } from "react-router-dom";
 import Footer from './Footer';
-import {checkLocalStorage, handleLogout} from './Common.js';
+import {/*checkLocalStorage,*/ handleLogout} from './Common.js';
 
 
 class AboutUs extends React.Component {

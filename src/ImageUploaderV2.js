@@ -5,7 +5,7 @@
 
 
 import React, { useState } from 'react';
-import {checkLocalStorage, handleLogout} from './Common.js';
+import {checkLocalStorage/*, handleLogout*/} from './Common.js';
 
 /**
  * 

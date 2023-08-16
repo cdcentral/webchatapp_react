@@ -3,7 +3,7 @@ import './css/MainPage.css';
 import Header from './Header';
 import { Outlet, Link } from "react-router-dom";
 import Footer from './Footer';
-import {checkLocalStorage, handleLogout} from './Common.js';
+import {/*checkLocalStorage,*/ handleLogout} from './Common.js';
 import { useSelector, useDispatch } from 'react-redux'
 /*********************************************
  *

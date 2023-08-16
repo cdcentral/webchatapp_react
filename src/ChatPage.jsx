@@ -2,7 +2,7 @@ import './css/ChatPage.css';
 
 import React from 'react';
 import {  Link } from "react-router-dom";
-import {checkLocalStorage, handleLogout, removeItemOnce, removeItemOnceObjectArray} from './Common.js';
+import {checkLocalStorage, handleLogout, /*removeItemOnce,*/ removeItemOnceObjectArray} from './Common.js';
 
 // auto complete
 import FreeSoloCreateOptionV3 from './FreeSoloCreateOptionV3';
@@ -50,7 +50,8 @@ super(props);
             // keycloak object passed in from parent.
             appKeycloak: props.keycloakObj,
             // current selected chat group, which has groupID and groupMembers
-            parentChatGroupObj: props.parentChatGroupObj
+            parentChatGroupObj: props.parentChatGroupObj,
+            avatarImageToShow: ''
         };
         // binded functions
         this.loadData = this.loadData.bind(this);
@@ -74,14 +75,23 @@ super(props);
         this.handleDeleteGroupV2 = this.handleDeleteGroupV2.bind(this);
         this.submitMessage = this.submitMessage.bind(this);
         this.getLatestMessages = this.getLatestMessages.bind(this);
+        this.checkIfGenerateAvatar = this.checkIfGenerateAvatar.bind(this);
         this.doNothing = this.doNothing.bind(this);
         this.handleDialogueOpen = this.handleDialogueOpen.bind(this);
         this.handleDialogueClose = this.handleDialogueClose.bind(this);
         this.handleConfirmDeletion = this.handleConfirmDeletion.bind(this);
         this.handleCancelDeletion = this.handleCancelDeletion.bind(this);
         this.handleDeletionBoolean = this.handleDeletionBoolean.bind(this);
+        this.removeDisplayedAvatarImage = this.removeDisplayedAvatarImage.bind(this);
 }
 
+/**
+ * This will remove the avatar image displayed (ie remove the avatar image of the user
+ * that posted a message and hence has their image displayed).
+ */
+removeDisplayedAvatarImage() {
+    this.setState({avatarImageToShow: ''});
+}
 /**************************************************************************
  * Handles opening the delete confirmation dialogue.
  **************************************************************************/
@@ -856,7 +866,9 @@ getLatestMessages() {
                         // Helpful to know who just posted so we can show their avatar!
                         prevMessagesFromDB: this.state.currentMessagesFromDB,
                         currentMessagesFromDB: messagesFromDB,
-                        chatGroupMessages: formattedContent});
+                        chatGroupMessages: formattedContent}, function() {
+                            this.checkIfGenerateAvatar(messagesFromDB);
+                        });
                 }
         } else {
             console.log('[ChatPage] getLatestMessages()-> jsonResponse is null.');
@@ -864,6 +876,45 @@ getLatestMessages() {
     }.bind(this));
 }
 
+/**
+ * Compares current chat messages wtih previous.  Determines if new message
+ * was generated and then extracts the users avatar who posted the newest message.
+ */
+checkIfGenerateAvatar(messagesFromDB) {
+    var prevMsgs = this.state.prevMessagesFromDB;
+    var currMsgs = this.state.currentMessagesFromDB;
+
+    if (prevMsgs !== undefined && currMsgs !== undefined) {
+        // see if last message for each is the same.
+        var prevMsgIndex = prevMsgs.length - 1;
+        var currMsgIndex = currMsgs.length -1;
+
+        if (prevMsgIndex >= 0 && currMsgIndex >= 0) {
+
+            if (prevMsgs[prevMsgIndex].msg_timestamp !== currMsgs[currMsgIndex].msg_timestamp) {
+
+                var friendsAvatars = this.state.friendsAvatars;
+                if (friendsAvatars.length >= 0) {
+
+                    for (var ix = 0; ix < friendsAvatars.length; ix++) {
+
+                        if (currMsgs[currMsgIndex].user_email === friendsAvatars[ix].friend) {
+                           // console.log('[ChatPage-render] AvatarChat component with following avatar -> ' + friendsAvatars[ix].avatarImageString);
+                            const avatarImageToPassIn = friendsAvatars[ix].avatarImageString;
+                            // invoke setState here, possibly just image to show.
+                            this.setState({avatarImageToShow: avatarImageToPassIn,
+                                            /*currentMessagesFromDB: messagesFromDB*/}, 
+                                                function() {
+                                                    setInterval(this.removeDisplayedAvatarImage, 3000); // remove after 3 seconds.
+                                         });
+                            //avatarHTML = <AvatarChat friendAvatar={avatarImageToPassIn} />
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 /***************************************************************************************************
  * Method: submitMessage
  * Description: takes text from the input box and submits it to backend.
@@ -936,6 +987,13 @@ render() {
     // *********************************************************
     // Gets Friends Avatars and sees generates HTML for Avatar of user who just posted a message.
     // *********************************************************
+    const avatar = this.state.avatarImageToShow;
+    var avatarHTML = '';
+    if (avatar !== undefined && avatar !== '') {
+        avatarHTML = <AvatarChat friendAvatar={avatar} />
+    }
+
+/*
     const friendsAvatars = this.state.friendsAvatars;
     var avatarHTML;
     const currentMsgs = this.state.currentMessagesFromDB;
@@ -945,18 +1003,18 @@ render() {
         // see if last message for each is the same.
         var prevMsgIndex = prevMsgs.length - 1;
         var currMsgIndex = currentMsgs.length -1;
-        console.log('[ChatPage-render] prevMsgIndex: ' + prevMsgIndex + ', currMsgIndex: ' + currMsgIndex);
+        //console.log('[ChatPage-render] prevMsgIndex: ' + prevMsgIndex + ', currMsgIndex: ' + currMsgIndex);
         if (prevMsgIndex >= 0 && currMsgIndex >= 0) {
 
             if (prevMsgs[prevMsgIndex].msg_timestamp !== currentMsgs[currMsgIndex].msg_timestamp) {
 
                 // new message came in. extract user/friend from this.  use this as the key to show the avatar.
-                console.log('[ChatPage-render] user email that just posted message -> ' + currentMsgs[currMsgIndex].user_email);
+                //console.log('[ChatPage-render] user email that just posted message -> ' + currentMsgs[currMsgIndex].user_email);
                 // with email iterate through friendsAvatars to find the image to pass in.
                 if (friendsAvatars.length >= 0) {
                     for (var ix = 0; ix < friendsAvatars.length; ix++) {
                         if (currentMsgs[currMsgIndex].user_email === friendsAvatars[ix].friend) {
-                            console.log('[ChatPage-render] AvatarChat component with following avatar -> ' + friendsAvatars[ix].avatarImageString);
+                           // console.log('[ChatPage-render] AvatarChat component with following avatar -> ' + friendsAvatars[ix].avatarImageString);
                             const avatarImageToPassIn = friendsAvatars[ix].avatarImageString;
                             avatarHTML = <AvatarChat friendAvatar={avatarImageToPassIn} />
                         }
@@ -965,6 +1023,7 @@ render() {
             }
         }
     }
+*/
 
 
     // Retrieves users username from keycloak object and Email and displays in Welcome text. *************************************************
