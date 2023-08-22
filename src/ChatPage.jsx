@@ -1002,7 +1002,7 @@ render() {
         chatMessagesHTML = currentMsgs.map(message =>
                 <div>
                     <div>
-                        <label>From:</label> {message.user_name}
+                        <label>From:</label> {message.user_name} &nbsp;&nbsp;
                         <label>Time:</label> {message.msg_timestamp}
                     </div>
 

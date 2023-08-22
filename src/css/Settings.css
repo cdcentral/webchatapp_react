@@ -8,6 +8,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this t
 */
 
 img {
+    /* Uncomment when want to help debug to see where img contents are.
     border-style: dashed;
     border-color: green;
+    */
 }
