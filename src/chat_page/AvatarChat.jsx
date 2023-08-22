@@ -1,5 +1,4 @@
-//import './css/ChatPage.css';
-
+import '../css/AvatarChat.css';
 import React from 'react';
 import {  Link } from "react-router-dom";
 
@@ -35,7 +34,9 @@ render() {
 
     return (
         <div>
+{/*
             <p>Avatar Section</p>
+*/}
             <img src={image} height="100px" width="100px" alt="image"/>
         </div>
     );

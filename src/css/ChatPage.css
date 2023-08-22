@@ -153,3 +153,40 @@ Modifies the font size for the Add Cancel html under the Groups text.  This hand
     padding-left: -100px;
     margin-left: -200px;
 }*/
+
+
+/* Setting scroll bar on section that has the messages. */
+.messageChatSection {
+
+    overflow-y:auto; 
+    height: 200px;
+
+}
+
+
+/* Class for text area's within the chatMessagesHTML variable.*/
+.textAreaChatHistory {
+
+    background-image: url(../img/AdobeStock_327771597-Copy-Rotated.jpeg);
+    background-repeat: no-repeat;
+
+    width: 80%;
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none;
+    overflow: hidden;
+    min-height: 50px;
+    max-height: 100px;
+}
+
+/* May be OBE. */
+#textAreaChatHistory_old {
+    background-color: #42eff5;
+}
+

@@ -993,6 +993,26 @@ render() {
         avatarHTML = <AvatarChat friendAvatar={avatar} />
     }
 
+    // ********************************************************
+    // Redo how currentMessagesFromDB should appear, which class/id definitions
+    var chatMessagesHTML;
+    const currentMsgs = this.state.currentMessagesFromDB;
+    if (currentMsgs.length > 0) {
+
+        chatMessagesHTML = currentMsgs.map(message =>
+                <div>
+                    <div>
+                        <label>From:</label> {message.user_name}
+                        <label>Time:</label> {message.msg_timestamp}
+                    </div>
+
+                    <textarea class="textAreaChatHistory" value={message.message} onChange={() => this.doNothing()}  readOnly >
+                    </textarea>
+                </div>
+
+                );
+
+    }
 /*
     const friendsAvatars = this.state.friendsAvatars;
     var avatarHTML;
@@ -1149,8 +1169,11 @@ render() {
                         <br/>
                         <label>Group messages:</label>
                         <br/>
-                        < textarea id="chatHistory" value={this.state.chatGroupMessages} onChange={() => this.doNothing()} rows="4" cols="50" readOnly >< /textarea>
+                        {/*
+                        < textarea id="textAreaChatHistory_old" value={this.state.chatGroupMessages} onChange={() => this.doNothing()} rows="4" cols="50" readOnly >< /textarea>
+                        */}
                         {/*      </form> */}
+                        <div class="messageChatSection">{chatMessagesHTML}</div>
                     </header>
                     <br/><br/>
                 </div>
