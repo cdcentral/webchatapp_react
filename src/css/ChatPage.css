@@ -19,21 +19,22 @@
 
  /* The sidebar menu */
 .sidenavChat {
-  height: 100%; /* Full-height: remove this if you want "auto" height */
+ height: 100%; /* Full-height: remove this if you want "auto" height */
   /* width: 160px; Set the width of the sidebar */
-  width: 240px;
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
+  /*width: 240px;*/
+  /*position: fixed;  Fixed Sidebar (stay in place on scroll) */
+  /*z-index: 1;  Stay on top */
+  /*top: 0;  Stay at the top */
+  /*left: 0;*/
   /*background-color: #111; */ /* Black */
   background-color: #abc;
-  overflow-x: hidden;   /*Disable horizontal scroll */  
+  /*overflow-x: hidden;   Disable horizontal scroll */  
   /*overflow-y:scroll;*/
   /*overflow-x:scroll;*/
   /*overflow: scroll;*/
   padding-top: 20px;
   inline-size: min-content; /*Makes side nav bar expand to min width of content. */
+ 
 }
 
 /* The navigation menu links */
@@ -69,7 +70,7 @@
 Modifies the font size for the Add Cancel html under the Groups text.  This handles showing/closing the auto complete.
 */
 .sidenavChat .groups .addCancelSection a {
-		font-size: 15px;
+    font-size: 15px;
 }
 
 .sidenavChat .groups {
@@ -84,21 +85,21 @@ Modifies the font size for the Add Cancel html under the Groups text.  This hand
 
 /* This is just effecting the list of saved group chats.*/
 .sidenavChat .groups ul li {
-	font-size: 10px;
+   font-size: 10px;
 
 	/*color: green;*//* this works.  Text in list are green.*/
 }
 
 /* This is for the <ul> element that contains the saved chat groups.  Does text align to be left and removes the bullets in the <ul> <li> tags*/
 .listSavedChatGroups {
-	text-align: left;
-	list-style-type: none;
+    text-align: left;
+    list-style-type: none;
 }
 
 /* This sets fontsize and color of the text creating new chat group.*/
 .temporaryFriendsChatGroup {
-	font-size: 10px;
-	color: yellow;
+    font-size: 10px;
+    color: yellow;
 }
 
 /* */
@@ -123,7 +124,73 @@ Modifies the font size for the Add Cancel html under the Groups text.  This hand
 
 /* Makes font size of list of group chats smaller. Also makes the spacing between group chats. */
 .groups li {
-	font-size: 10px;
-	padding-top:5px;
-	padding-bottom: 5px;
+    font-size: 10px;
+    padding-top:5px;
+    padding-bottom: 5px;
 }
+
+
+
+.flex-container {
+    display: flex;
+    /* Uncomment if want to see sections more clearly.
+    border: 2px solid orange;
+    */
+    height: 100vh;
+}
+
+.flex-child {
+    flex: 1;
+    /* Uncomment if want to see sections more clearly.
+    border: 2px solid yellow;
+    */
+}  
+
+.flex-child:first-child {
+    /*height: 100%;*/
+    flex: 0.5;
+    /*margin-right: 20px;
+    margin-left: 240px;*/
+} 
+/*
+.flex-child:second-child {
+    padding-left: -100px;
+    margin-left: -200px;
+}*/
+
+
+/* Setting scroll bar on section that has the messages. */
+.messageChatSection {
+
+    overflow-y:auto; 
+    height: 45vh;
+
+}
+
+
+/* Class for text area's within the chatMessagesHTML variable.*/
+.textAreaChatHistory {
+
+    background-image: url(../img/AdobeStock_327771597-Copy-Rotated.jpeg);
+    background-repeat: no-repeat;
+
+    width: 80%;
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    resize: none;
+    overflow: hidden;
+    min-height: 50px;
+    max-height: 100px;
+}
+
+/* May be OBE. */
+#textAreaChatHistory_old {
+    background-color: #42eff5;
+}
+

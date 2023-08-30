@@ -18,6 +18,9 @@
 import React from 'react';
 
 import MainPage from './MainPage';
+import Settings from './Settings';
+//import MainPageV2 from './MainPageV2';
+//import MainPageV3 from './MainPageV3';
 import ChatPage from './ChatPage';
 import InviteFriend from './InviteFriend';
 import InviteAccepted from './InviteAccepted';
@@ -75,6 +78,9 @@ class MainApp extends React.Component {
                                     parentChatGroupObj = {this.props.parentChatGroupData} persistParentChatGroupDataMethod = {this.props.persistParentChatGroupDataMethod} / > } />
                             <Route path="InviteFriend" element={ < InviteFriend logoutUrl = {this.state.logoutUrl}
                                     persistKeycloakObj = {this.props.parentPersistKeycloakMethod} keycloakObj = {this.props.parentKeycloak} / > } />
+                            <Route path="Settings" element={ < Settings logoutUrl = {this.state.logoutUrl}
+                                    persistKeycloakObj = {this.props.parentPersistKeycloakMethod} keycloakObj = {this.props.parentKeycloak} 
+                                    parentChatGroupObj = {this.props.parentChatGroupData} persistParentChatGroupDataMethod = {this.props.persistParentChatGroupDataMethod} / > } />
                             <Route path="InviteAccepted" element={ < InviteAccepted keycloakObj = {this.props.parentKeycloak} logoutUrl = {this.state.logoutUrl} / > } />
                             <Route path="AboutUs" element={ < AboutUs logoutUrl = {this.state.logoutUrl} / > } />
                             <Route path="ContactUs" element={ < ContactUs logoutUrl = {this.state.logoutUrl} / > } />
